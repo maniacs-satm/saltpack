@@ -95,7 +95,7 @@ func newSignatureHeader(sender SigningPublicKey, msgType MessageType) (*Signatur
 	}
 
 	header := &SignatureHeader{
-		FormatName:   SaltpackFormatName,
+		FormatName:   FormatName,
 		Version:      SaltpackCurrentVersion,
 		Type:         msgType,
 		SenderPublic: sender.ToKID(),

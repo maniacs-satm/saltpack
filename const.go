@@ -44,9 +44,9 @@ const SignedArmorString = "SIGNED MESSAGE"
 // DetachedSignatureArmorString is included in armor headers for detached signatures.
 const DetachedSignatureArmorString = "DETACHED SIGNATURE"
 
-// SaltpackFormatName is the publicly advertised name of the format,
-// used in the header of the message and also in Nonce creation.
-const SaltpackFormatName = "saltpack"
+// FormatName is the publicly advertised name of the format, used in
+// the header of the message and also in Nonce creation.
+const FormatName = "saltpack"
 
 // signatureBlockSize is by default 1MB and can't currently be tweaked.
 const signatureBlockSize int = 1048576

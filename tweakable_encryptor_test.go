@@ -136,7 +136,7 @@ func (pes *testEncryptStream) init(sender BoxSecretKey, receivers []BoxPublicKey
 	}
 
 	eh := &EncryptionHeader{
-		FormatName: SaltpackFormatName,
+		FormatName: FormatName,
 		Version:    SaltpackCurrentVersion,
 		Type:       MessageTypeEncryption,
 		Ephemeral:  ephemeralKey.GetPublicKey().ToKID(),
