@@ -119,7 +119,7 @@ func computePayloadAuthenticator(macKey macKey, payloadHash payloadHash) payload
 	return auth
 }
 
-func computeMACKey(secret BoxSecretKey, public BoxPublicKey, headerHash headerHash) macKey {
+func computeMACKey(version Version, secret BoxSecretKey, public BoxPublicKey, headerHash headerHash) macKey {
 	nonce := nonceForMACKeyBox(headerHash)
 	macKeyBox := secret.Box(public, nonce, make([]byte, cryptoAuthKeyBytes))
 	var macKey macKey
