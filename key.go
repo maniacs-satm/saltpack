@@ -72,7 +72,7 @@ type BoxSecretKey interface {
 	// specified.
 	Box(receiver BoxPublicKey, nonce *Nonce, msg []byte) []byte
 
-	// Unobx opens up the box, using this secret key as the receiver key
+	// Unbox opens up the box, using this secret key as the receiver key
 	// abd the give public key as the sender key.
 	Unbox(sender BoxPublicKey, nonce *Nonce, msg []byte) ([]byte, error)
 
