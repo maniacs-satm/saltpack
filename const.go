@@ -28,9 +28,9 @@ const MessageTypeDetachedSignature MessageType = 2
 // signcrypted message.
 const MessageTypeSigncryption MessageType = 3
 
-var SaltpackVersion1 = Version{Major: 1, Minor: 0}
-var SaltpackVersion2 = Version{Major: 2, Minor: 0}
-var SaltpackCurrentVersion = SaltpackVersion1
+var Version1 = Version{Major: 1, Minor: 0}
+var Version2 = Version{Major: 2, Minor: 0}
+var CurrentVersion = Version1
 
 // encryptionBlockSize is by default 1MB and can't currently be tweaked.
 const encryptionBlockSize int = 1048576
