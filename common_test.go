@@ -85,6 +85,13 @@ var secret2 = boxSecretKey{
 	key: RawBoxKey{0x10},
 }
 
+var eSecret1 = boxSecretKey{
+	key: RawBoxKey{0x18},
+}
+var eSecret2 = boxSecretKey{
+	key: RawBoxKey{0x20},
+}
+
 var public1 = boxPublicKey{
 	key: RawBoxKey{0x5},
 }
@@ -94,16 +101,21 @@ var public2 = boxPublicKey{
 
 var constHeaderHash = headerHash{0x7}
 
-func TestComputeMacKey(t *testing.T) {
-	macKey1 := computeMACKey(secret1, public1, constHeaderHash)
-	macKey2 := computeMACKey(secret2, public1, constHeaderHash)
-	macKey3 := computeMACKey(secret1, public2, constHeaderHash)
+func TestComputeMacKeyV1(t *testing.T) {
+	macKey1 := computeMACKey(Version1(), secret1, eSecret1, public1, constHeaderHash)
+	macKey2 := computeMACKey(Version1(), secret2, eSecret1, public1, constHeaderHash)
+	macKey3 := computeMACKey(Version1(), secret1, eSecret2, public1, constHeaderHash)
+	macKey4 := computeMACKey(Version1(), secret1, eSecret1, public2, constHeaderHash)
 
 	if macKey2 == macKey1 {
 		t.Errorf("macKey2 == macKey1 == %v unexpectedly", macKey1)
 	}
 
-	if macKey3 == macKey1 {
-		t.Errorf("macKey3 == macKey1 == %v unexpectedly", macKey1)
+	if macKey3 != macKey1 {
+		t.Errorf("macKey3 == %v != macKey1 == %v unexpectedly", macKey3, macKey1)
+	}
+
+	if macKey4 == macKey1 {
+		t.Errorf("macKey4 == macKey1 == %v unexpectedly", macKey1)
 	}
 }
