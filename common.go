@@ -119,7 +119,7 @@ func computePayloadAuthenticator(macKey macKey, payloadHash payloadHash) payload
 	return auth
 }
 
-func computeMACKeyHelper(secret BoxSecretKey, public BoxPublicKey, headerHash headerHash) macKey {
+func computeMACKeySingle(secret BoxSecretKey, public BoxPublicKey, headerHash headerHash) macKey {
 	nonce := nonceForMACKeyBox(headerHash)
 	macKeyBox := secret.Box(public, nonce, make([]byte, cryptoAuthKeyBytes))
 	var macKey macKey
@@ -130,10 +130,10 @@ func computeMACKeyHelper(secret BoxSecretKey, public BoxPublicKey, headerHash he
 func computeMACKey(version Version, secret, eSecret BoxSecretKey, public BoxPublicKey, headerHash headerHash) macKey {
 	switch version {
 	case Version1():
-		return computeMACKeyHelper(secret, public, headerHash)
+		return computeMACKeySingle(secret, public, headerHash)
 	case Version2():
-		mac1 := computeMACKeyHelper(secret, public, headerHash)
-		mac2 := computeMACKeyHelper(eSecret, public, headerHash)
+		mac1 := computeMACKeySingle(secret, public, headerHash)
+		mac2 := computeMACKeySingle(eSecret, public, headerHash)
 		hash := sha512.Sum512_256(append(mac1[:], mac2[:]...))
 		return hash
 	default:
@@ -153,10 +153,10 @@ func computeMACKeys(version Version, headerHash headerHash, sender, ephemeralKey
 func computeMACKeyReceiver(version Version, secret BoxSecretKey, public, ePublic BoxPublicKey, headerHash headerHash) macKey {
 	switch version {
 	case Version1():
-		return computeMACKeyHelper(secret, public, headerHash)
+		return computeMACKeySingle(secret, public, headerHash)
 	case Version2():
-		mac1 := computeMACKeyHelper(secret, public, headerHash)
-		mac2 := computeMACKeyHelper(secret, ePublic, headerHash)
+		mac1 := computeMACKeySingle(secret, public, headerHash)
+		mac2 := computeMACKeySingle(secret, ePublic, headerHash)
 		hash := sha512.Sum512_256(append(mac1[:], mac2[:]...))
 		return hash
 	default:
