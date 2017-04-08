@@ -938,7 +938,7 @@ func testCorruptEncryption(t *testing.T, version Version) {
 	}
 }
 
-func TestCorruptButAuthenticPayloadBox(t *testing.T) {
+func testCorruptButAuthenticPayloadBox(t *testing.T, version Version) {
 	sender := newBoxKey(t)
 	receivers := []BoxPublicKey{newBoxKey(t).GetPublicKey()}
 	msg := randomMsg(t, 1024*2-1)
@@ -960,7 +960,7 @@ func TestCorruptButAuthenticPayloadBox(t *testing.T) {
 	}
 }
 
-func TestCorruptNonce(t *testing.T) {
+func testCorruptNonce(t *testing.T, version Version) {
 	msg := randomMsg(t, 1024*11)
 	teo := testEncryptionOptions{
 		blockSize: 1024,
@@ -987,7 +987,7 @@ func TestCorruptNonce(t *testing.T) {
 	}
 }
 
-func TestCorruptHeader(t *testing.T) {
+func testCorruptHeader(t *testing.T, version Version) {
 	msg := randomMsg(t, 1024*11)
 
 	// Test bad Header version
@@ -1050,7 +1050,7 @@ func TestCorruptHeader(t *testing.T) {
 	}
 }
 
-func TestNoSenderKey(t *testing.T) {
+func testNoSenderKey(t *testing.T, version Version) {
 	sender := newBoxKeyBlacklistPublic(t)
 	receivers := []BoxPublicKey{newBoxKey(t).GetPublicKey()}
 	msg := randomMsg(t, 1024*9)
@@ -1334,6 +1334,10 @@ func TestEncrypt(t *testing.T) {
 		testCorruptSenderSecretboxCiphertext,
 		testMissingFooter,
 		testCorruptEncryption,
+		testCorruptButAuthenticPayloadBox,
+		testCorruptNonce,
+		testCorruptHeader,
+		testNoSenderKey,
 	}
 	runTestsOverVersions(t, "test", tests)
 }
