@@ -782,7 +782,7 @@ func testCorruptPayloadKeyPlaintext(t *testing.T, version Version) {
 	}
 }
 
-func TestCorruptSenderSecretboxPlaintext(t *testing.T) {
+func testCorruptSenderSecretboxPlaintext(t *testing.T, version Version) {
 	msg := randomMsg(t, 129)
 
 	// First try flipping a bit. This should break the first payload packet.
@@ -828,7 +828,7 @@ func TestCorruptSenderSecretboxPlaintext(t *testing.T) {
 	}
 }
 
-func TestCorruptSenderSecretboxCiphertext(t *testing.T) {
+func testCorruptSenderSecretboxCiphertext(t *testing.T, version Version) {
 	msg := randomMsg(t, 129)
 
 	teo := testEncryptionOptions{
@@ -1330,6 +1330,8 @@ func TestEncrypt(t *testing.T) {
 		testCorruptHeaderNonceR5,
 		testCorruptPayloadKeyBoxR5,
 		testCorruptPayloadKeyPlaintext,
+		testCorruptSenderSecretboxPlaintext,
+		testCorruptSenderSecretboxCiphertext,
 	}
 	runTestsOverVersions(t, "test", tests)
 }
