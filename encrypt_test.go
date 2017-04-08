@@ -1164,7 +1164,7 @@ func testAllAnonymous(t *testing.T, version Version) {
 
 }
 
-func TestCorruptEmpheralKey(t *testing.T) {
+func testCorruptEphemeralKey(t *testing.T, version Version) {
 	receivers := []BoxPublicKey{newHiddenBoxKey(t).GetPublicKey()}
 	plaintext := randomMsg(t, 1024*3)
 	teo := testEncryptionOptions{
@@ -1172,7 +1172,7 @@ func TestCorruptEmpheralKey(t *testing.T) {
 			eh.Ephemeral = eh.Ephemeral[0 : len(eh.Ephemeral)-1]
 		},
 	}
-	ciphertext, err := testSeal(Version1(), plaintext, nil, receivers, teo)
+	ciphertext, err := testSeal(version, plaintext, nil, receivers, teo)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1182,7 +1182,7 @@ func TestCorruptEmpheralKey(t *testing.T) {
 	}
 }
 
-func TestCiphertextSwapKeys(t *testing.T) {
+func testCiphertextSwapKeys(t *testing.T, version Version) {
 	receivers := []BoxPublicKey{
 		newBoxKeyNoInsert(t).GetPublicKey(),
 		newBoxKey(t).GetPublicKey(),
@@ -1194,7 +1194,7 @@ func TestCiphertextSwapKeys(t *testing.T) {
 			h.Receivers[1].PayloadKeyBox, h.Receivers[0].PayloadKeyBox = h.Receivers[0].PayloadKeyBox, h.Receivers[1].PayloadKeyBox
 		},
 	}
-	ciphertext, err := testSeal(Version1(), plaintext, nil, receivers, teo)
+	ciphertext, err := testSeal(version, plaintext, nil, receivers, teo)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1204,7 +1204,7 @@ func TestCiphertextSwapKeys(t *testing.T) {
 	}
 }
 
-func TestEmptyReceiverKID(t *testing.T) {
+func testEmptyReceiverKID(t *testing.T, version Version) {
 	receivers := []BoxPublicKey{
 		newHiddenBoxKeyNoInsert(t).GetPublicKey(),
 		newHiddenBoxKey(t).GetPublicKey(),
@@ -1216,7 +1216,7 @@ func TestEmptyReceiverKID(t *testing.T) {
 			keys.ReceiverKID = []byte{}
 		},
 	}
-	ciphertext, err := testSeal(Version1(), plaintext, nil, receivers, teo)
+	ciphertext, err := testSeal(version, plaintext, nil, receivers, teo)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1341,6 +1341,9 @@ func TestEncrypt(t *testing.T) {
 		testSealAndOpenTrailingGarbage,
 		testAnonymousSender,
 		testAllAnonymous,
+		testCorruptEphemeralKey,
+		testCiphertextSwapKeys,
+		testEmptyReceiverKID,
 	}
 	runTestsOverVersions(t, "test", tests)
 }
