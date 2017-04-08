@@ -798,7 +798,7 @@ func testCorruptSenderSecretboxPlaintext(t *testing.T, version Version) {
 		newBoxKey(t).GetPublicKey(),
 		newBoxKeyNoInsert(t).GetPublicKey(),
 	}
-	ciphertext, err := testSeal(Version1(), msg, sender, receivers, teo)
+	ciphertext, err := testSeal(version, msg, sender, receivers, teo)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -818,7 +818,7 @@ func testCorruptSenderSecretboxPlaintext(t *testing.T, version Version) {
 			*pk = shortKey[:]
 		},
 	}
-	ciphertext, err = testSeal(Version1(), msg, sender, receivers, teo)
+	ciphertext, err = testSeal(version, msg, sender, receivers, teo)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -843,7 +843,7 @@ func testCorruptSenderSecretboxCiphertext(t *testing.T, version Version) {
 		newBoxKey(t).GetPublicKey(),
 		newBoxKeyNoInsert(t).GetPublicKey(),
 	}
-	ciphertext, err := testSeal(Version1(), msg, sender, receivers, teo)
+	ciphertext, err := testSeal(version, msg, sender, receivers, teo)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -857,7 +857,7 @@ func testMissingFooter(t *testing.T, version Version) {
 	sender := newBoxKey(t)
 	receivers := []BoxPublicKey{newBoxKey(t).GetPublicKey()}
 	msg := randomMsg(t, 1024*9)
-	ciphertext, err := testSeal(Version1(), msg, sender, receivers, testEncryptionOptions{
+	ciphertext, err := testSeal(version, msg, sender, receivers, testEncryptionOptions{
 		skipFooter: true,
 		blockSize:  1024,
 	})
@@ -876,7 +876,7 @@ func testCorruptEncryption(t *testing.T, version Version) {
 	msg := randomMsg(t, 1024*9)
 
 	// First check that a corrupted ciphertext fails the Poly1305
-	ciphertext, err := testSeal(Version1(), msg, sender, receivers, testEncryptionOptions{
+	ciphertext, err := testSeal(version, msg, sender, receivers, testEncryptionOptions{
 		blockSize: 1024,
 		corruptEncryptionBlock: func(eb *encryptionBlock, ebn encryptionBlockNumber) {
 			if ebn == 2 {
@@ -895,7 +895,7 @@ func testCorruptEncryption(t *testing.T, version Version) {
 	}
 
 	// Next check that a corruption of the Poly1305 tags causes a failure
-	ciphertext, err = testSeal(Version1(), msg, sender, receivers, testEncryptionOptions{
+	ciphertext, err = testSeal(version, msg, sender, receivers, testEncryptionOptions{
 		blockSize: 1024,
 		corruptEncryptionBlock: func(eb *encryptionBlock, ebn encryptionBlockNumber) {
 			if ebn == 2 {
@@ -915,7 +915,7 @@ func testCorruptEncryption(t *testing.T, version Version) {
 
 	// Next check what happens if we swap nonces for blocks 0 and 1
 	msg = randomMsg(t, 1024*2-1)
-	ciphertext, err = testSeal(Version1(), msg, sender, receivers, testEncryptionOptions{
+	ciphertext, err = testSeal(version, msg, sender, receivers, testEncryptionOptions{
 		blockSize: 1024,
 		corruptPayloadNonce: func(n *Nonce, ebn encryptionBlockNumber) *Nonce {
 			switch ebn {
@@ -942,7 +942,7 @@ func testCorruptButAuthenticPayloadBox(t *testing.T, version Version) {
 	sender := newBoxKey(t)
 	receivers := []BoxPublicKey{newBoxKey(t).GetPublicKey()}
 	msg := randomMsg(t, 1024*2-1)
-	ciphertext, err := testSeal(Version1(), msg, sender, receivers, testEncryptionOptions{
+	ciphertext, err := testSeal(version, msg, sender, receivers, testEncryptionOptions{
 		corruptCiphertextBeforeHash: func(c []byte, ebn encryptionBlockNumber) {
 			if ebn == 0 {
 				c[0] ^= 1
@@ -975,7 +975,7 @@ func testCorruptNonce(t *testing.T, version Version) {
 	}
 	sender := newBoxKey(t)
 	receivers := []BoxPublicKey{newBoxKey(t).GetPublicKey()}
-	ciphertext, err := testSeal(Version1(), msg, sender, receivers, teo)
+	ciphertext, err := testSeal(version, msg, sender, receivers, teo)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -999,7 +999,7 @@ func testCorruptHeader(t *testing.T, version Version) {
 	}
 	sender := newBoxKey(t)
 	receivers := []BoxPublicKey{newBoxKey(t).GetPublicKey()}
-	ciphertext, err := testSeal(Version1(), msg, sender, receivers, teo)
+	ciphertext, err := testSeal(version, msg, sender, receivers, teo)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1017,7 +1017,7 @@ func testCorruptHeader(t *testing.T, version Version) {
 			eh.Type = MessageTypeAttachedSignature
 		},
 	}
-	ciphertext, err = testSeal(Version1(), msg, sender, receivers, teo)
+	ciphertext, err = testSeal(version, msg, sender, receivers, teo)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1040,7 +1040,7 @@ func testCorruptHeader(t *testing.T, version Version) {
 			b[3] = 0xff
 		},
 	}
-	ciphertext, err = testSeal(Version1(), msg, sender, receivers, teo)
+	ciphertext, err = testSeal(version, msg, sender, receivers, teo)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1054,7 +1054,7 @@ func testNoSenderKey(t *testing.T, version Version) {
 	sender := newBoxKeyBlacklistPublic(t)
 	receivers := []BoxPublicKey{newBoxKey(t).GetPublicKey()}
 	msg := randomMsg(t, 1024*9)
-	ciphertext, err := testSeal(Version1(), msg, sender, receivers, testEncryptionOptions{
+	ciphertext, err := testSeal(version, msg, sender, receivers, testEncryptionOptions{
 		blockSize: 1024,
 	})
 	if err != nil {
@@ -1066,11 +1066,11 @@ func testNoSenderKey(t *testing.T, version Version) {
 	}
 }
 
-func TestSealAndOpenTrailingGarbage(t *testing.T) {
+func testSealAndOpenTrailingGarbage(t *testing.T, version Version) {
 	sender := newBoxKey(t)
 	receivers := []BoxPublicKey{newBoxKey(t).GetPublicKey()}
 	plaintext := randomMsg(t, 1024*3)
-	ciphertext, err := Seal(Version1(), plaintext, sender, receivers)
+	ciphertext, err := Seal(version, plaintext, sender, receivers)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1083,10 +1083,10 @@ func TestSealAndOpenTrailingGarbage(t *testing.T) {
 	}
 }
 
-func TestAnonymousSender(t *testing.T) {
+func testAnonymousSender(t *testing.T, version Version) {
 	receivers := []BoxPublicKey{newBoxKey(t).GetPublicKey()}
 	plaintext := randomMsg(t, 1024*3)
-	ciphertext, err := Seal(Version1(), plaintext, nil, receivers)
+	ciphertext, err := Seal(version, plaintext, nil, receivers)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1096,7 +1096,7 @@ func TestAnonymousSender(t *testing.T) {
 	}
 }
 
-func TestAllAnonymous(t *testing.T) {
+func testAllAnonymous(t *testing.T, version Version) {
 	receivers := []BoxPublicKey{
 		newHiddenBoxKeyNoInsert(t).GetPublicKey(),
 		newHiddenBoxKeyNoInsert(t).GetPublicKey(),
@@ -1108,7 +1108,7 @@ func TestAllAnonymous(t *testing.T) {
 		newHiddenBoxKeyNoInsert(t).GetPublicKey(),
 	}
 	plaintext := randomMsg(t, 1024*3)
-	ciphertext, err := Seal(Version1(), plaintext, nil, receivers)
+	ciphertext, err := Seal(version, plaintext, nil, receivers)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1139,7 +1139,7 @@ func TestAllAnonymous(t *testing.T) {
 	}
 
 	receivers[5] = newHiddenBoxKeyNoInsert(t).GetPublicKey()
-	ciphertext, err = Seal(Version1(), plaintext, nil, receivers)
+	ciphertext, err = Seal(version, plaintext, nil, receivers)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1338,6 +1338,9 @@ func TestEncrypt(t *testing.T) {
 		testCorruptNonce,
 		testCorruptHeader,
 		testNoSenderKey,
+		testSealAndOpenTrailingGarbage,
+		testAnonymousSender,
+		testAllAnonymous,
 	}
 	runTestsOverVersions(t, "test", tests)
 }
