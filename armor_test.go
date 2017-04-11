@@ -44,7 +44,7 @@ func testArmor(t *testing.T, sz int) {
 		t.Fatal(err)
 	}
 	if !bytes.Equal(m, m2) {
-		t.Errorf("Buffers disagreed: %v != %v (%d v %d)\n", m, m2, len(m), len(m2))
+		t.Errorf("Buffers disagreed: %v != %v (%d v %d)", m, m2, len(m), len(m2))
 	}
 	if hdr != hdr2 {
 		t.Errorf("headers disagreed: %s != %s", hdr, hdr2)

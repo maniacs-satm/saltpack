@@ -448,7 +448,7 @@ func TestTruncation(t *testing.T) {
 	trunced1 := ciphertext[0 : len(ciphertext)-51]
 	_, _, err = Open(trunced1, kr)
 	if err != io.ErrUnexpectedEOF {
-		t.Fatalf("Wanted an %v; but got %v\n", io.ErrUnexpectedEOF, err)
+		t.Fatalf("Wanted an %v; but got %v", io.ErrUnexpectedEOF, err)
 	}
 }
 
@@ -544,7 +544,7 @@ func TestEmptyReceivers(t *testing.T) {
 	plaintext := randomMsg(t, 1024*3)
 	_, err := Seal(plaintext, sender, receivers)
 	if err != ErrBadReceivers {
-		t.Fatalf("Wanted error %v but got %v\n", ErrBadReceivers, err)
+		t.Fatalf("Wanted error %v but got %v", ErrBadReceivers, err)
 	}
 }
 
