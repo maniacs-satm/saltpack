@@ -323,7 +323,7 @@ func NewDecryptStream(r io.Reader, keyring Keyring) (mki *MessageKeyInfo, plaint
 }
 
 // Open simply opens a ciphertext given the set of keys in the specified keyring.
-// It returns a plaintext on sucess, and an error on failure. It returns the header's
+// It returns a plaintext on success, and an error on failure. It returns the header's
 // MessageKeyInfo in either case.
 func Open(ciphertext []byte, keyring Keyring) (i *MessageKeyInfo, plaintext []byte, err error) {
 	buf := bytes.NewBuffer(ciphertext)
