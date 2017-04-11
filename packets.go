@@ -18,6 +18,8 @@ type Version struct {
 	Minor   int  `codec:"minor"`
 }
 
+// TODO: Check FormatName in the various Header.validate() functions.
+
 // EncryptionHeader is the first packet in an encrypted message. It contains
 // the encryptions of the session key, and various message metadata. This same
 // struct is used for the signcryption mode as well, though the key types
