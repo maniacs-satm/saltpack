@@ -25,6 +25,7 @@ func nonceForPayloadKeyBoxV1() *Nonce {
 
 func nonceForPayloadKeyBoxV2(recip uint64) *Nonce {
 	var n Nonce
+	// TODO: Actually mix in recip.
 	copyEqualSizeStr(n[:], "saltpack_recipsbXXXXXXXX")
 	return &n
 }
@@ -35,9 +36,16 @@ func nonceForDerivedSharedKey() *Nonce {
 	return &n
 }
 
-func nonceForMACKeyBox(headerHash headerHash) *Nonce {
+func nonceForMACKeyBoxV1(headerHash headerHash) *Nonce {
 	var n Nonce
 	copyEqualSize(n[:], headerHash[:nonceBytes])
+	return &n
+}
+
+func nonceForMACKeyBoxV2(headerHash headerHash, recip uint64) *Nonce {
+	var n Nonce
+	copyEqualSize(n[:nonceBytes-8], headerHash[:nonceBytes-8])
+	binary.BigEndian.PutUint64(n[nonceBytes-8:], uint64(recip))
 	return &n
 }
 
