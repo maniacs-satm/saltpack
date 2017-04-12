@@ -50,7 +50,7 @@ func (h *EncryptionHeader) validate() error {
 	if h.Type != MessageTypeEncryption {
 		return ErrWrongMessageType{MessageTypeEncryption, h.Type}
 	}
-	if h.Version.Major != CurrentVersion.Major {
+	if h.Version.Major != CurrentVersion().Major {
 		return ErrBadVersion{h.Version}
 	}
 	return nil
@@ -71,7 +71,7 @@ func (h *SigncryptionHeader) validate() error {
 	if h.Type != MessageTypeSigncryption {
 		return ErrWrongMessageType{MessageTypeSigncryption, h.Type}
 	}
-	if h.Version.Major != Version2.Major {
+	if h.Version.Major != Version2().Major {
 		return ErrBadVersion{h.Version}
 	}
 	return nil
@@ -98,7 +98,7 @@ func newSignatureHeader(sender SigningPublicKey, msgType MessageType) (*Signatur
 
 	header := &SignatureHeader{
 		FormatName:   FormatName,
-		Version:      CurrentVersion,
+		Version:      CurrentVersion(),
 		Type:         msgType,
 		SenderPublic: sender.ToKID(),
 		Nonce:        nonce[:],
@@ -114,7 +114,7 @@ func (h *SignatureHeader) validate(msgType MessageType) error {
 			received: h.Type,
 		}
 	}
-	if h.Version.Major != CurrentVersion.Major {
+	if h.Version.Major != CurrentVersion().Major {
 		return ErrBadVersion{h.Version}
 	}
 
