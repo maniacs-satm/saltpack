@@ -136,7 +136,7 @@ func sum512Truncate256(in []byte) [32]byte {
 	return out
 }
 
-func computeMACKeySender(version Version, secret, eSecret BoxSecretKey, public BoxPublicKey, headerHash headerHash) macKey {
+func computeMACKeySender(version Version, index uint64, secret, eSecret BoxSecretKey, public BoxPublicKey, headerHash headerHash) macKey {
 	switch version {
 	case Version1():
 		nonce := nonceForMACKeyBoxV1(headerHash)
@@ -152,7 +152,7 @@ func computeMACKeySender(version Version, secret, eSecret BoxSecretKey, public B
 	}
 }
 
-func computeMACKeyReceiver(version Version, secret BoxSecretKey, public, ePublic BoxPublicKey, headerHash headerHash) macKey {
+func computeMACKeyReceiver(version Version, index uint64, secret BoxSecretKey, public, ePublic BoxPublicKey, headerHash headerHash) macKey {
 	switch version {
 	case Version1():
 		nonce := nonceForMACKeyBoxV1(headerHash)
@@ -170,8 +170,8 @@ func computeMACKeyReceiver(version Version, secret BoxSecretKey, public, ePublic
 
 func computeMACKeysSender(version Version, sender, ephemeralKey BoxSecretKey, receivers []BoxPublicKey, headerHash headerHash) []macKey {
 	var macKeys []macKey
-	for _, receiver := range receivers {
-		macKey := computeMACKeySender(version, sender, ephemeralKey, receiver, headerHash)
+	for i, receiver := range receivers {
+		macKey := computeMACKeySender(version, uint64(i), sender, ephemeralKey, receiver, headerHash)
 		macKeys = append(macKeys, macKey)
 	}
 	return macKeys
